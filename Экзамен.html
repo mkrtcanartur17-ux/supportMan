@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Экзамен — случайный билет</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 28px;
+            text-align: center;
+            color: #1a1a2e;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid #e8edf9;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 10px;
+            border: none;
+            background: #f8f9ff;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            color: #888;
+            position: relative;
+        }
+
+        .tab-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .tab-btn .badge {
+            display: inline-block;
+            background: #f56565;
+            color: white;
+            font-size: 11px;
+            padding: 1px 8px;
+            border-radius: 20px;
+            margin-left: 5px;
+        }
+
+        .tab-btn.active .badge {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        #question {
+            background: #f8f9ff;
+            padding: 30px 20px;
+            border-radius: 16px;
+            font-size: 18px;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            margin: 15px 0;
+            border: 2px solid #e8edf9;
+            transition: all 0.3s;
+        }
+
+        #question.all-done {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-group button {
+            flex: 1;
+            min-width: 100px;
+            padding: 14px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        #drawBtn {
+            background: #667eea;
+            color: white;
+        }
+
+        #drawBtn:hover:not(:disabled) {
+            background: #5a67d8;
+            transform: scale(1.02);
+        }
+
+        #drawBtn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #resetBtn {
+            background: #f56565;
+            color: white;
+        }
+
+        #resetBtn:hover {
+            background: #e53e3e;
+            transform: scale(1.02);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+            padding: 15px 0;
+            border-top: 2px solid #e8edf9;
+        }
+
+        .stat-item {
+            text-align: center;
+            background: #f8f9ff;
+            padding: 10px;
+            border-radius: 12px;
+        }
+
+        .stat-item .number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-item .label {
+            font-size: 12px;
+            color: #888;
+            margin-top: 2px;
+        }
+
+        .stat-item .number.failed {
+            color: #f56565;
+        }
+
+        .history-section {
+            margin-top: 20px;
+            border-top: 2px solid #e8edf9;
+            padding-top: 15px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .history-header h3 {
+            font-size: 16px;
+            color: #1a1a2e;
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .history-actions button {
+            background: none;
+            border: none;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: 0.2s;
+        }
+
+        .clear-history-btn {
+            color: #f56565;
+        }
+
+        .clear-history-btn:hover {
+            background: #fff5f5;
+        }
+
+        .return-all-btn {
+            color: #667eea;
+        }
+
+        .return-all-btn:hover {
+            background: #f0f2ff;
+        }
+
+        .learn-all-btn {
+            color: #38a169;
+        }
+
+        .learn-all-btn:hover {
+            background: #f0fff4;
+        }
+
+        #historyList,
+        #failedList {
+            list-style: none;
+            padding: 0;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        #historyList li,
+        #failedList li {
+            padding: 10px 12px;
+            background: #f8f9ff;
+            margin-bottom: 6px;
+            border-radius: 10px;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        #historyList li {
+            border-left: 4px solid #667eea;
+        }
+
+        #failedList li {
+            border-left: 4px solid #f56565;
+            background: #fff5f5;
+        }
+
+        #historyList li .left,
+        #failedList li .left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        #historyList li .number,
+        #failedList li .number {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        #failedList li .number {
+            color: #f56565;
+        }
+
+        #historyList li .text,
+        #failedList li .text {
+            flex: 1;
+            word-break: break-word;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .fail-btn {
+            background: #fed7d7;
+            border: none;
+            color: #c53030;
+            padding: 5px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+
+        .fail-btn:hover {
+            background: #feb2b2;
+            transform: scale(1.05);
+        }
+
+        .answer-btn {
+            background: #bee3f8;
+            border: none;
+            color: #2b6cb0;
+            padding: 5px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+
+        .answer-btn:hover {
+            background: #90cdf4;
+            transform: scale(1.05);
+        }
+
+        .return-btn {
+            background: #e9d8fd;
+            border: none;
+            color: #6b46c1;
+            padding: 5px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+
+        .return-btn:hover {
+            background: #d6bcfa;
+            transform: scale(1.05);
+        }
+
+        .empty-history {
+            color: #999;
+            font-style: italic;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .progress-container {
+            margin-top: 15px;
+            background: #e8edf9;
+            border-radius: 20px;
+            height: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 20px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 13px;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a2e;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 999;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            from {
+                transform: scale(0.9) translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal h2 {
+            font-size: 20px;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal .question-text {
+            background: #f0f2ff;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 16px;
+            color: #333;
+            margin: 10px 0;
+        }
+
+        .modal .answer-text {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 16px;
+            color: #155724;
+            border-left: 4px solid #28a745;
+            margin: 10px 0;
+        }
+
+        .modal .close-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+
+        .modal .close-btn:hover {
+            background: #5a67d8;
+            transform: scale(1.02);
+        }
+
+        .modal .no-answer {
+            color: #e53e3e;
+            font-style: italic;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            #question {
+                font-size: 16px;
+                padding: 20px 15px;
+                min-height: 80px;
+            }
+            .stats {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 6px;
+            }
+            .stat-item .number {
+                font-size: 20px;
+            }
+            #historyList li,
+            #failedList li {
+                font-size: 13px;
+                padding: 8px 10px;
+            }
+            .btn-group button {
+                font-size: 14px;
+                padding: 12px 16px;
+                min-width: 80px;
+            }
+            .history-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .history-actions {
+                justify-content: flex-start;
+            }
+            .fail-btn,
+            .answer-btn,
+            .return-btn {
+                font-size: 12px;
+                padding: 4px 10px;
+            }
+            .modal {
+                padding: 20px;
+            }
+            .modal h2 {
+                font-size: 18px;
+            }
+            .tabs .tab-btn {
+                font-size: 13px;
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎓 Экзаменационные билеты</h1>
+        <div class="subtitle">Каждый билет выпадает только 1 раз</div>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="main" onclick="switchTab('main')">
+                📚 Все билеты
+            </button>
+            <button class="tab-btn" data-tab="failed" onclick="switchTab('failed')">
+                ❌ Не выученные <span class="badge" id="failedBadge">0</span>
+            </button>
+        </div>
+
+        <div class="tab-content active" id="tab-main">
+            <div id="question">Нажмите кнопку 👇</div>
+
+            <div class="btn-group">
+                <button id="drawBtn" onclick="drawTicket()">🎲 Вытянуть билет</button>
+                <button id="resetBtn" onclick="resetAll()">🔄 Сбросить всё</button>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText">0%</div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="number" id="totalCount">0</div>
+                    <div class="label">Всего билетов</div>
+                </div>
+                <div class="stat-item">
+                    <div class="number" id="drawnCount">0</div>
+                    <div class="label">Выучено</div>
+                </div>
+                <div class="stat-item">
+                    <div class="number" id="remainingCount">0</div>
+                    <div class="label">Осталось</div>
+                </div>
+            </div>
+
+            <div class="history-section">
+                <div class="history-header">
+                    <h3>📋 История билетов</h3>
+                    <div class="history-actions">
+                        <button class="clear-history-btn" onclick="clearHistory()">🗑️ Очистить</button>
+                    </div>
+                </div>
+                <ul id="historyList">
+                    <li class="empty-history">Пока ничего не вытянуто</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-failed">
+            <div style="text-align:center; padding: 10px 0; color: #888; font-size:14px;">
+                ❌ Билеты, которые вы отметили как «Не выучил»
+            </div>
+
+            <div class="history-section" style="border-top: none; padding-top: 0;">
+                <div class="history-header">
+                    <h3>📋 Не выученные билеты</h3>
+                    <div class="history-actions">
+                        <button class="return-all-btn" onclick="returnAllFailed()">↩️ Вернуть все</button>
+                        <button class="learn-all-btn" onclick="learnAllFailed()">✅ Выучить все</button>
+                    </div>
+                </div>
+                <ul id="failedList">
+                    <li class="empty-history">🎉 Нет невыученных билетов</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer">💾 Прогресс сохраняется автоматически</div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <div class="modal-overlay" id="answerModal">
+        <div class="modal">
+            <h2>📖 Ответ на билет</h2>
+            <div class="question-text" id="modalQuestion">Вопрос</div>
+            <div class="answer-text" id="modalAnswer">Ответ</div>
+            <button class="close-btn" onclick="closeAnswerModal()">Понятно ✅</button>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // БИЛЕТЫ
+        // ============================================
+        const allTickets = [
+    { id: 1, text: "Понятие и цели: Что такое технология разработки ПО? На чем она базируется и какова ее основная цель?", answer: "Технология разработки ПО — это совокупность методов, инструментов и процессов, используемых для создания программных продуктов. Базируется на инженерии, менеджменте и математике. Основная цель — создание качественного ПО в срок." },
+    { id: 2, text: "Каскадная модель: Опишите каскадную (водопадную) модель. В чем ее достоинства, недостатки и для каких проектов она приемлема?", answer: "Каскадная модель — последовательная разработка, где каждый этап завершается перед началом следующего. Достоинства: простота, четкая структура. Недостатки: сложно вносить изменения, тестирование на поздних этапах. Приемлема для проектов с четкими требованиями." },
+    { id: 3, text: "Эволюционные и итеративные модели: В чем суть эволюционной модели разработки? Опишите спиральную модель и модель с пошаговой разработкой (инкрементная).", answer: "Эволюционная модель — разработка через итерации, каждая версия улучшается. Спиральная модель — циклы: анализ рисков → разработка → планирование → повтор. Инкрементная модель — добавляется функциональность по частям." },
+    { id: 4, text: "Современные методологии: Дайте характеристику методологии RUP (Rational Unified Process). Назовите ее основные фазы и вспомогательные процессы. В чем особенности MSF (Microsoft Solutions Framework)", answer: "RUP — итеративная методология с фазами: начало, детализация, построение, внедрение. Вспомогательные процессы: управление требованиями, моделирование, тестирование. MSF — гибкая методология с акцентом на командную работу." },
+    { id: 5, text: "Жизненный цикл ПО: Перечислите основные этапы жизненного цикла программного обеспечения. Какой этап, согласно статистике, занимает наибольшее время?", answer: "Этапы: Анализ требований → Проектирование → Кодирование → Тестирование → Внедрение → Сопровождение. Наибольшее время занимает этап сопровождения (до 70% всех затрат)." },
+    { id: 6, text: "Анализ требований: В чем заключается этап анализа требований? Что такое функциональные и нефункциональные требования? Приведите примеры.", answer: "Анализ требований — сбор и формализация того, что система должна делать. Функциональные требования: 'пользователь может войти в систему'. Нефункциональные: 'система должна работать без перебоев 99,9% времени'." },
+    { id: 7, text: "Проектирование и кодирование: Опишите этапы проектирования и кодирования. Как связаны между собой процесс объектно-ориентированного анализа и проектирования?", answer: "Проектирование — создание архитектуры системы. Кодирование — написание кода по проекту. Объектно-ориентированный анализ выявляет классы и объекты, проектирование определяет их взаимодействие." },
+    { id: 8, text: "Тестирование и отладка: Дайте определения понятиям «тестирование» и «отладка» ПО. Назовите уровни тестирования. В чем разница между верификацией и валидацией?", answer: "Тестирование — поиск ошибок. Отладка — их исправление. Уровни: модульное, интеграционное, системное, приемочное. Верификация — проверка соответствия спецификациям. Валидация — проверка соответствия ожиданиям пользователя." },
+    { id: 9, text: "Архитектура ПО: Дайте определение архитектуры программного средства. Перечислите основные классы архитектур", answer: "Архитектура — высокоуровневая структура системы, включающая компоненты и их связи. Классы: монолитная, клиент-серверная, микросервисная, слойная, событийно-ориентированная." },
+    { id: 10, text: "Модульность и структура: Что такое программный модуль? Назовите его основные характеристики. Каковы принципы структурного программирования и пошаговой детализации?", answer: "Модуль — логически связанный набор функций и данных. Характеристики: связность (внутренняя) и сцепление (внешнее). Принципы: разделяй и властвуй, пошаговая детализация — разбиение задачи на подзадачи." },
+    { id: 11, text: "Критерии качества: Перечислите основные критерии качества программного обеспечения (надежность, эффективность, сопровождаемость и др.). Почему ПО должно эффективно использовать ресурсы ПК?", answer: "Критерии: надежность, эффективность, сопровождаемость, удобство использования, переносимость, функциональность, безопасность. Эффективное использование ресурсов необходимо для работы на ограниченных мощностях и экономии затрат." },
+    { id: 12, text: "Сопровождение ПО: Что такое сопровождение программного средства? Назовите основные виды сопровождения.", answer: "Сопровождение — поддержка ПО после внедрения. Виды: корректирующее (исправление ошибок), адаптивное (адаптация к новым условиям), совершенствующее (улучшение), предупреждающее (профилактика)." },
+    { id: 13, text: "CASE-средства: Что такое CASE-технологии? Какие задачи они решают и для чего используются в разработке ПО?", answer: "CASE — инструменты автоматизации разработки ПО. Задачи: моделирование, генерация кода, управление требованиями, документирование, тестирование. Используются на всех этапах ЖЦ." },
+    { id: 14, text: "Понятие модели: Дайте определение модели. Какие виды моделей существуют (натурные, информационные, математические, образные)? Приведите примеры.", answer: "Модель — упрощенное представление объекта. Виды: натурные (макет здания), информационные (таблицы), математические (формулы), образные (рисунки, схемы)." },
+    { id: 15, text: "Цели моделирования: С какой целью создаются модели? Что такое существенные признаки объекта и как они влияют на построение модели?", answer: "Цели: понять объект, предсказать поведение, оптимизировать параметры, принять решение. Существенные признаки — ключевые свойства, которые должны быть отражены в модели. Остальное можно опустить." },
+    { id: 16, text: "Этапы моделирования: Опишите последовательность этапов компьютерного моделирования (от постановки задачи до анализа результатов).", answer: "Этапы: Постановка задачи → Формализация → Разработка модели → Проведение экспериментов → Анализ результатов → Корректировка модели." },
+    { id: 17, text: "Классификация моделей: Чем отличаются статические и динамические модели? Что такое модель поведения системы? Приведите примеры.", answer: "Статические — описывают объект в фиксированный момент (схема БД). Динамические — описывают изменение во времени (график процесса). Модель поведения — описывает реакции системы на события (конечный автомат)." },
+    { id: 18, text: "Назначение UML: Для чего используется унифицированный язык моделирования UML? Что такое нотация UML и ее основные строительные блоки (сущности, отношения, диаграммы)?", answer: "UML — язык визуального моделирования для описания, проектирования и документирования систем. Нотация — система условных обозначений. Блоки: сущности (классы, объекты), отношения (наследование, ассоциация), диаграммы." },
+    { id: 19, text: "Типы диаграмм UML: На какие две большие группы делятся диаграммы UML (структурные и поведенческие)? Приведите примеры диаграмм из каждой группы.", answer: "Структурные: диаграмма классов, компонентов, развертывания. Поведенческие: диаграмма прецедентов, последовательности, состояний, деятельности." },
+    { id: 20, text: "Диаграммы прецедентов: Что отображает диаграмма вариантов использования (прецедентов)? Какие элементы входят в ее состав?", answer: "Показывает функциональные требования через взаимодействие акторов с вариантами использования. Элементы: акторы, прецеденты (варианты использования), связи между ними." },
+    { id: 21, text: "Диаграммы взаимодействия: Назовите диаграммы взаимодействия в UML (диаграмма последовательности и диаграмма коммуникации). В чем их сходство и различие?", answer: "Диаграмма последовательности — показывает временной порядок сообщений. Диаграмма коммуникации — акцент на структуре связей между объектами. Сходство: показывают взаимодействие объектов. Различие: во временной и структурной перспективе." },
+    { id: 22, text: "Диаграммы состояний и деятельности: Для чего предназначены диаграммы состояний и диаграммы деятельности? Какие ключевые элементы (состояния, переходы, узлы действия) на них используются?", answer: "Диаграмма состояний — показывает состояния объекта и переходы между ними. Элементы: состояния, начальное/конечное состояние, переходы. Диаграмма деятельности — моделирует рабочие процессы. Элементы: узлы действия, разветвления, слияния." },
+    { id: 23, text: "Структурный подход: В чем суть структурного подхода к моделированию бизнес-процессов? Основные принципы (декомпозиция, иерархия).", answer: "Структурный подход — декомпозиция системы на иерархически связанные функции и данные. Принципы: разделение на модули, иерархическая организация, минимизация связей между модулями." },
+    { id: 24, text: "Объектно-ориентированный подход: Назовите основные принципы объектной модели (абстракция, инкапсуляция, наследование, полиморфизм). Как применяется объектно-ориентированный подход к анализу?", answer: "Принципы: абстракция (выделение существенных свойств), инкапсуляция (скрытие данных), наследование (создание иерархий), полиморфизм (разное поведение). При анализе выделяются классы, их атрибуты, методы и связи." },
+    { id: 25, text: "Методологии анализа бизнеса: Перечислите инструментальные средства для моделирования и анализа бизнес-процессов.", answer: "Инструменты: BPMN (нотация моделирования процессов), IDEF0 (функциональное моделирование), UML (диаграммы деятельности), ARIS (комплексное моделирование), DFD (потоки данных)." },
+    { id: 26, text: "Жизненный цикл и моделирование: Как модели жизненного цикла ПО связаны с этапами создания моделей (анализ, проектирование, реализация)?", answer: "На этапе анализа создаются концептуальные модели (требования). На этапе проектирования — логические и физические модели (архитектура). На этапе реализации — модели кода (диаграммы классов)." }
+	        ];
+
+        // ============================================
+        // СОСТОЯНИЕ
+        // ============================================
+        const STORAGE_KEY = 'examAppData';
+
+        let remainingTickets = [];
+        let drawnTickets = [];
+        let failedTickets = [];
+
+        // ============================================
+        // DOM
+        // ============================================
+        const questionEl = document.getElementById('question');
+        const drawBtn = document.getElementById('drawBtn');
+        const totalCountEl = document.getElementById('totalCount');
+        const drawnCountEl = document.getElementById('drawnCount');
+        const remainingCountEl = document.getElementById('remainingCount');
+        const historyList = document.getElementById('historyList');
+        const failedList = document.getElementById('failedList');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const failedBadge = document.getElementById('failedBadge');
+        const toastEl = document.getElementById('toast');
+        const modalOverlay = document.getElementById('answerModal');
+        const modalQuestion = document.getElementById('modalQuestion');
+        const modalAnswer = document.getElementById('modalAnswer');
+
+        // ============================================
+        // TOAST
+        // ============================================
+        let toastTimeout;
+
+        function showToast(message) {
+            toastEl.textContent = message;
+            toastEl.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toastEl.classList.remove('show');
+            }, 2000);
+        }
+
+        // ============================================
+        // ВКЛАДКИ
+        // ============================================
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active');
+            document.querySelector('.tab-btn[data-tab="' + tab + '"]').classList.add('active');
+        }
+
+        // ============================================
+        // МОДАЛКА
+        // ============================================
+        function showAnswer(ticketId) {
+            const ticket = allTickets.find(t => t.id === ticketId);
+            if (!ticket) { showToast('❌ Билет не найден'); return; }
+            modalQuestion.textContent = '📌 ' + ticket.text;
+            if (ticket.answer) {
+                modalAnswer.textContent = ticket.answer;
+                modalAnswer.classList.remove('no-answer');
+            } else {
+                modalAnswer.textContent = '❌ Ответ не добавлен';
+                modalAnswer.classList.add('no-answer');
+            }
+            modalOverlay.classList.add('active');
+        }
+
+        function closeAnswerModal() {
+            modalOverlay.classList.remove('active');
+        }
+
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === modalOverlay) closeAnswerModal();
+        });
+
+        // ============================================
+        // ХРАНИЛИЩЕ
+        // ============================================
+        function saveState() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                remaining: remainingTickets,
+                drawn: drawnTickets,
+                failed: failedTickets
+            }));
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    remainingTickets = data.remaining || [];
+                    drawnTickets = data.drawn || [];
+                    failedTickets = data.failed || [];
+                    return true;
+                } catch (e) { return false; }
+            }
+            return false;
+        }
+
+        // ============================================
+        // ЛОГИКА
+        // ============================================
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function init() {
+            const hasSaved = loadState();
+            if (!hasSaved || (remainingTickets.length === 0 && drawnTickets.length === 0 && failedTickets.length === 0)) {
+                remainingTickets = shuffleArray([...allTickets]);
+                drawnTickets = [];
+                failedTickets = [];
+                saveState();
+            }
+            updateUI();
+            if (remainingTickets.length === 0 && drawnTickets.length > 0 && failedTickets.length === 0) {
+                questionEl.textContent = 'Все билеты вытянуты! 🎉';
+                questionEl.className = 'all-done';
+                drawBtn.disabled = true;
+            } else {
+                drawBtn.disabled = false;
+                if (!questionEl.classList.contains('all-done')) {
+                    questionEl.textContent = 'Нажмите кнопку 👇';
+                }
+            }
+        }
+
+        function drawTicket() {
+            if (remainingTickets.length === 0) {
+                if (failedTickets.length > 0) {
+                    showToast('📚 Есть невыученные билеты! Переключитесь на вкладку.');
+                }
+                return;
+            }
+            const ticket = remainingTickets.pop();
+            drawnTickets.push(ticket);
+            questionEl.textContent = ticket.text;
+            questionEl.className = '';
+            if (remainingTickets.length === 0 && failedTickets.length === 0) {
+                questionEl.textContent = 'Все билеты вытянуты! 🎉';
+                questionEl.className = 'all-done';
+                drawBtn.disabled = true;
+            }
+            saveState();
+            updateUI();
+            showToast('✅ Билет #' + ticket.id + ' вытянут!');
+        }
+
+        function returnTicket(ticketId) {
+            const index = drawnTickets.findIndex(t => t.id === ticketId);
+            if (index === -1) { showToast('❌ Билет не найден'); return; }
+            const ticket = drawnTickets.splice(index, 1)[0];
+            failedTickets.push(ticket);
+            drawBtn.disabled = false;
+            questionEl.className = '';
+            saveState();
+            updateUI();
+            showToast('❌ Билет #' + ticket.id + ' отмечен как невыученный');
+        }
+
+        function returnFromFailed(ticketId) {
+            const index = failedTickets.findIndex(t => t.id === ticketId);
+            if (index === -1) { showToast('❌ Билет не найден'); return; }
+            const ticket = failedTickets.splice(index, 1)[0];
+            remainingTickets.push(ticket);
+            remainingTickets = shuffleArray(remainingTickets);
+            saveState();
+            updateUI();
+            showToast('↩️ Билет #' + ticket.id + ' возвращён в очередь');
+        }
+
+        function returnAllFailed() {
+            if (failedTickets.length === 0) { showToast('📭 Нет невыученных билетов'); return; }
+            if (confirm('Вернуть все невыученные билеты в общую очередь?')) {
+                remainingTickets = shuffleArray([...remainingTickets, ...failedTickets]);
+                failedTickets = [];
+                drawBtn.disabled = false;
+                questionEl.className = '';
+                saveState();
+                updateUI();
+                showToast('🔄 Все билеты возвращены в очередь');
+            }
+        }
+
+        function learnAllFailed() {
+            if (failedTickets.length === 0) { showToast('🎉 Нет невыученных билетов'); return; }
+            if (confirm('Отметить все невыученные билеты как выученные?')) {
+                drawnTickets = [...drawnTickets, ...failedTickets];
+                failedTickets = [];
+                saveState();
+                updateUI();
+                showToast('✅ Все билеты отмечены как выученные');
+            }
+        }
+
+        function resetAll() {
+            if (confirm('Сбросить ВЕСЬ прогресс?')) {
+                remainingTickets = shuffleArray([...allTickets]);
+                drawnTickets = [];
+                failedTickets = [];
+                drawBtn.disabled = false;
+                questionEl.textContent = 'Нажмите кнопку 👇';
+                questionEl.className = '';
+                saveState();
+                updateUI();
+                showToast('🔄 Прогресс сброшен');
+            }
+        }
+
+        function clearHistory() {
+            if (drawnTickets.length === 0) { showToast('📭 История пуста'); return; }
+            if (confirm('Очистить историю выученных билетов?')) {
+                drawnTickets = [];
+                saveState();
+                updateUI();
+                showToast('🗑️ История очищена');
+            }
+        }
+
+        // ============================================
+        // UI
+        // ============================================
+        function updateUI() {
+            const total = allTickets.length;
+            const drawn = drawnTickets.length;
+            const remaining = remainingTickets.length;
+            const failed = failedTickets.length;
+
+            totalCountEl.textContent = total;
+            drawnCountEl.textContent = drawn;
+            remainingCountEl.textContent = remaining;
+
+            const progress = total > 0 ? Math.round((drawn / total) * 100) : 0;
+            progressBar.style.width = progress + '%';
+            progressText.textContent = progress + '%';
+
+            failedBadge.textContent = failed;
+            failedBadge.style.display = failed > 0 ? 'inline-block' : 'none';
+
+            renderHistory();
+            renderFailed();
+        }
+
+        function renderHistory() {
+            historyList.innerHTML = '';
+            if (drawnTickets.length === 0) {
+                historyList.innerHTML = '<li class="empty-history">Пока ничего не вытянуто</li>';
+                return;
+            }
+            const displayList = [...drawnTickets].reverse();
+            displayList.forEach((ticket) => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <div class="left">
+                        <span class="number">#${ticket.id}</span>
+                        <span class="text">${ticket.text}</span>
+                        <span class="status">✅</span>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="answer-btn" onclick="showAnswer(${ticket.id})">📖 Ответ</button>
+                        <button class="fail-btn" onclick="returnTicket(${ticket.id})">❌ Не выучил</button>
+                    </div>
+                `;
+                historyList.appendChild(li);
+            });
+        }
+
+        function renderFailed() {
+            failedList.innerHTML = '';
+            if (failedTickets.length === 0) {
+                failedList.innerHTML = '<li class="empty-history">🎉 Нет невыученных билетов</li>';
+                return;
+            }
+            const displayList = [...failedTickets].reverse();
+            displayList.forEach((ticket) => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <div class="left">
+                        <span class="number">#${ticket.id}</span>
+                        <span class="text">${ticket.text}</span>
+                        <span class="status">❌</span>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="answer-btn" onclick="showAnswer(${ticket.id})">📖 Ответ</button>
+                        <button class="return-btn" onclick="returnFromFailed(${ticket.id})">↩️ В очередь</button>
+                    </div>
+                `;
+                failedList.appendChild(li);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+        window.addEventListener('beforeunload', saveState);
+    </script>
+</body>
+</html>
