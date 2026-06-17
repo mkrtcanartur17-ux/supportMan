@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Экзамен — случайный билет</title>
+    <title>Экзамен — Билеты</title>
     <style>
         * {
             margin: 0;
@@ -12,8 +12,8 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Arial, sans-serif;
+            background: #f4f7fc;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -22,67 +22,78 @@
         }
 
         .container {
-            background: white;
-            padding: 30px;
-            border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 600px;
+            background: #ffffff;
+            padding: 32px;
+            border-radius: 32px;
+            box-shadow: 0 16px 48px rgba(0, 20, 40, 0.08);
+            max-width: 720px;
             width: 100%;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(0, 20, 40, 0.04);
         }
 
         h1 {
-            font-size: 28px;
+            font-size: 30px;
+            font-weight: 700;
             text-align: center;
-            color: #1a1a2e;
-            margin-bottom: 5px;
+            color: #0b1a33;
+            letter-spacing: -0.3px;
+            margin-bottom: 4px;
         }
 
         .subtitle {
             text-align: center;
-            color: #888;
-            font-size: 14px;
-            margin-bottom: 20px;
+            color: #6b7a8f;
+            font-size: 15px;
+            font-weight: 400;
+            margin-bottom: 28px;
+            border-bottom: 1px solid #eef2f6;
+            padding-bottom: 18px;
         }
 
+        /* Вкладки */
         .tabs {
             display: flex;
-            gap: 0;
-            margin-bottom: 20px;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 2px solid #e8edf9;
+            gap: 6px;
+            margin-bottom: 24px;
+            background: #f0f4fa;
+            padding: 4px;
+            border-radius: 18px;
         }
 
         .tab-btn {
             flex: 1;
             padding: 12px 10px;
             border: none;
-            background: #f8f9ff;
+            background: transparent;
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.3s;
-            color: #888;
-            position: relative;
+            transition: 0.25s;
+            color: #5a6d86;
+            border-radius: 14px;
         }
 
         .tab-btn.active {
-            background: #667eea;
-            color: white;
+            background: #ffffff;
+            color: #0b1a33;
+            box-shadow: 0 4px 14px rgba(0, 20, 40, 0.06);
         }
 
         .tab-btn .badge {
             display: inline-block;
-            background: #f56565;
-            color: white;
+            background: #eef2f6;
+            color: #3a4b62;
             font-size: 11px;
-            padding: 1px 8px;
-            border-radius: 20px;
-            margin-left: 5px;
+            padding: 0 10px;
+            border-radius: 40px;
+            margin-left: 6px;
+            font-weight: 600;
         }
 
         .tab-btn.active .badge {
-            background: rgba(255, 255, 255, 0.3);
+            background: #e6edf6;
+            color: #1a314d;
         }
 
         .tab-content {
@@ -91,222 +102,241 @@
 
         .tab-content.active {
             display: block;
+            animation: fadeUp 0.3s ease;
         }
 
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Окно вопроса */
         #question {
-            background: #f8f9ff;
-            padding: 30px 20px;
-            border-radius: 16px;
-            font-size: 18px;
-            min-height: 100px;
+            background: #f7faff;
+            padding: 32px 24px;
+            border-radius: 20px;
+            font-size: 20px;
+            line-height: 1.6;
+            min-height: 120px;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            margin: 15px 0;
-            border: 2px solid #e8edf9;
-            transition: all 0.3s;
+            margin: 0 0 20px 0;
+            border: 1px solid #eaf0f6;
+            color: #0b1a33;
+            font-weight: 500;
+            transition: all 0.25s;
+            white-space: pre-wrap;
         }
 
         #question.all-done {
-            background: #d4edda;
-            border-color: #28a745;
-            color: #155724;
-            font-size: 20px;
-            font-weight: bold;
+            background: #e7f4ed;
+            border-color: #a1c9b8;
+            color: #1d4a3a;
+            font-size: 22px;
         }
 
+        /* Кнопки */
         .btn-group {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
         }
 
         .btn-group button {
             flex: 1;
-            min-width: 100px;
-            padding: 14px 20px;
+            min-width: 120px;
+            padding: 15px 20px;
             font-size: 16px;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
             font-weight: 600;
+            border: none;
+            border-radius: 18px;
+            cursor: pointer;
+            transition: 0.2s;
         }
 
         #drawBtn {
-            background: #667eea;
+            background: #0b1a33;
             color: white;
+            box-shadow: 0 4px 14px rgba(11, 26, 51, 0.08);
         }
 
         #drawBtn:hover:not(:disabled) {
-            background: #5a67d8;
-            transform: scale(1.02);
+            background: #1a2d4a;
+            transform: translateY(-2px);
         }
 
         #drawBtn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
+            background: #d0d8e0;
+            color: #6b7a8f;
+            box-shadow: none;
             transform: none;
         }
 
         #resetBtn {
-            background: #f56565;
-            color: white;
+            background: #f0f4fa;
+            color: #2a405a;
         }
 
         #resetBtn:hover {
-            background: #e53e3e;
-            transform: scale(1.02);
+            background: #e5ecf4;
+            transform: translateY(-2px);
         }
 
+        /* Статистика */
         .stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 15px;
-            padding: 15px 0;
-            border-top: 2px solid #e8edf9;
+            gap: 12px;
+            margin-top: 20px;
+            padding: 18px 0 10px 0;
+            border-top: 1px solid #eef2f6;
         }
 
         .stat-item {
             text-align: center;
-            background: #f8f9ff;
-            padding: 10px;
-            border-radius: 12px;
+            background: #f7faff;
+            padding: 14px 8px;
+            border-radius: 16px;
+            border: 1px solid #eaf0f6;
         }
 
         .stat-item .number {
-            font-size: 24px;
-            font-weight: bold;
-            color: #667eea;
+            font-size: 28px;
+            font-weight: 700;
+            color: #0b1a33;
         }
 
-        .stat-item .label {
-            font-size: 12px;
-            color: #888;
-            margin-top: 2px;
+        .stat-item .number.done {
+            color: #1f8b6a;
         }
 
         .stat-item .number.failed {
-            color: #f56565;
+            color: #b13e4b;
         }
 
+        .stat-item .label {
+            font-size: 13px;
+            color: #6b7a8f;
+            margin-top: 4px;
+        }
+
+        /* История */
         .history-section {
-            margin-top: 20px;
-            border-top: 2px solid #e8edf9;
-            padding-top: 15px;
+            margin-top: 22px;
+            border-top: 1px solid #eef2f6;
+            padding-top: 18px;
         }
 
         .history-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
             flex-wrap: wrap;
             gap: 10px;
+            margin-bottom: 12px;
         }
 
         .history-header h3 {
-            font-size: 16px;
-            color: #1a1a2e;
-        }
-
-        .history-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            font-size: 17px;
+            font-weight: 600;
+            color: #0b1a33;
         }
 
         .history-actions button {
             background: none;
             border: none;
             font-size: 13px;
-            cursor: pointer;
             font-weight: 600;
+            color: #6b7a8f;
             padding: 4px 8px;
-            border-radius: 6px;
+            border-radius: 8px;
+            cursor: pointer;
             transition: 0.2s;
         }
 
+        .history-actions button:hover {
+            background: #f0f4fa;
+            color: #1a2d4a;
+        }
+
         .clear-history-btn {
-            color: #f56565;
+            color: #b13e4b;
         }
 
         .clear-history-btn:hover {
-            background: #fff5f5;
-        }
-
-        .return-all-btn {
-            color: #667eea;
-        }
-
-        .return-all-btn:hover {
-            background: #f0f2ff;
-        }
-
-        .learn-all-btn {
-            color: #38a169;
-        }
-
-        .learn-all-btn:hover {
-            background: #f0fff4;
+            background: #fdf0f2 !important;
         }
 
         #historyList,
         #failedList {
             list-style: none;
             padding: 0;
-            max-height: 250px;
+            max-height: 260px;
             overflow-y: auto;
         }
 
         #historyList li,
         #failedList li {
-            padding: 10px 12px;
-            background: #f8f9ff;
-            margin-bottom: 6px;
-            border-radius: 10px;
+            padding: 12px 14px;
+            background: #f7faff;
+            margin-bottom: 8px;
+            border-radius: 14px;
             font-size: 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 8px;
             flex-wrap: wrap;
+            gap: 8px;
+            border: 1px solid #eaf0f6;
         }
 
         #historyList li {
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #0b1a33;
         }
 
         #failedList li {
-            border-left: 4px solid #f56565;
-            background: #fff5f5;
+            border-left: 4px solid #b13e4b;
+            background: #fcf7f8;
         }
 
         #historyList li .left,
         #failedList li .left {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             flex: 1;
-            min-width: 150px;
+            min-width: 140px;
         }
 
         #historyList li .number,
         #failedList li .number {
-            font-weight: bold;
-            color: #667eea;
+            font-weight: 600;
+            color: #0b1a33;
+            background: #eef2f6;
+            padding: 0 10px;
+            border-radius: 30px;
+            font-size: 12px;
+            line-height: 24px;
         }
 
         #failedList li .number {
-            color: #f56565;
+            background: #f0e3e5;
+            color: #7a2e38;
         }
 
         #historyList li .text,
         #failedList li .text {
             flex: 1;
             word-break: break-word;
+            color: #1a2d4a;
         }
 
         .action-buttons {
@@ -316,78 +346,76 @@
         }
 
         .fail-btn {
-            background: #fed7d7;
+            background: #fdf0f2;
             border: none;
-            color: #c53030;
-            padding: 5px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
+            color: #b13e4b;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 12px;
             font-weight: 600;
+            cursor: pointer;
             transition: 0.2s;
-            white-space: nowrap;
         }
 
         .fail-btn:hover {
-            background: #feb2b2;
-            transform: scale(1.05);
+            background: #fce1e5;
         }
 
         .answer-btn {
-            background: #bee3f8;
+            background: #eaf0f6;
             border: none;
-            color: #2b6cb0;
-            padding: 5px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
+            color: #1a3a5a;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 12px;
             font-weight: 600;
+            cursor: pointer;
             transition: 0.2s;
-            white-space: nowrap;
         }
 
         .answer-btn:hover {
-            background: #90cdf4;
-            transform: scale(1.05);
+            background: #dce6f0;
         }
 
         .return-btn {
-            background: #e9d8fd;
+            background: #eef0f6;
             border: none;
-            color: #6b46c1;
-            padding: 5px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 13px;
+            color: #3a4b62;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 12px;
             font-weight: 600;
+            cursor: pointer;
             transition: 0.2s;
-            white-space: nowrap;
         }
 
         .return-btn:hover {
-            background: #d6bcfa;
-            transform: scale(1.05);
+            background: #e3e8f0;
         }
 
         .empty-history {
-            color: #999;
+            color: #8a9aa8;
             font-style: italic;
             text-align: center;
-            padding: 10px;
+            padding: 18px;
+            background: #f7faff;
+            border-radius: 16px;
+            border: 1px dashed #d5dfe8;
         }
 
+        /* Прогресс */
         .progress-container {
-            margin-top: 15px;
-            background: #e8edf9;
-            border-radius: 20px;
-            height: 10px;
+            margin-top: 18px;
+            background: #eef2f6;
+            border-radius: 40px;
+            height: 8px;
             overflow: hidden;
         }
 
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            border-radius: 20px;
+            background: #0b1a33;
+            border-radius: 40px;
             transition: width 0.5s ease;
             width: 0%;
         }
@@ -395,30 +423,35 @@
         .progress-text {
             text-align: center;
             font-size: 13px;
-            color: #888;
-            margin-top: 5px;
+            color: #6b7a8f;
+            margin-top: 6px;
+            font-weight: 500;
         }
 
         .footer {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 22px;
             font-size: 12px;
-            color: #ccc;
+            color: #b0becd;
+            border-top: 1px solid #eef2f6;
+            padding-top: 16px;
         }
 
+        /* Toast */
         .toast {
             position: fixed;
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            background: #1a1a2e;
-            color: white;
+            background: #0b1a33;
+            color: #f0f4fa;
             padding: 12px 24px;
-            border-radius: 12px;
+            border-radius: 50px;
             font-size: 14px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            font-weight: 500;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: opacity 0.25s;
             z-index: 999;
             pointer-events: none;
         }
@@ -427,19 +460,20 @@
             opacity: 1;
         }
 
+        /* Модалка */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(2px);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 1000;
             padding: 20px;
-            backdrop-filter: blur(4px);
         }
 
         .modal-overlay.active {
@@ -447,128 +481,113 @@
         }
 
         .modal {
-            background: white;
-            border-radius: 24px;
-            padding: 30px;
-            max-width: 500px;
+            background: #ffffff;
+            border-radius: 32px;
+            padding: 36px;
+            max-width: 540px;
             width: 100%;
-            max-height: 80vh;
+            max-height: 85vh;
             overflow-y: auto;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
-            animation: modalIn 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.06);
+            animation: modalIn 0.25s ease;
         }
 
         @keyframes modalIn {
             from {
-                transform: scale(0.9) translateY(20px);
+                transform: scale(0.96);
                 opacity: 0;
             }
             to {
-                transform: scale(1) translateY(0);
+                transform: scale(1);
                 opacity: 1;
             }
         }
 
         .modal h2 {
-            font-size: 20px;
-            color: #1a1a2e;
+            font-size: 22px;
+            font-weight: 700;
+            color: #0b1a33;
             margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
         .modal .question-text {
-            background: #f0f2ff;
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 16px;
-            color: #333;
-            margin: 10px 0;
+            background: #f7faff;
+            padding: 18px 20px;
+            border-radius: 16px;
+            font-size: 17px;
+            color: #0b1a33;
+            margin: 12px 0;
+            white-space: pre-wrap;
+            line-height: 1.6;
+            border: 1px solid #eaf0f6;
         }
 
         .modal .answer-text {
-            background: #d4edda;
-            padding: 15px;
-            border-radius: 12px;
+            background: #f2f9f5;
+            padding: 20px 22px;
+            border-radius: 16px;
             font-size: 16px;
-            color: #155724;
-            border-left: 4px solid #28a745;
-            margin: 10px 0;
+            color: #1f4a3a;
+            border-left: 4px solid #1f8b6a;
+            margin: 12px 0;
+            white-space: pre-wrap;
+            line-height: 1.7;
+            border: 1px solid #d7e8e0;
         }
 
         .modal .close-btn {
-            background: #667eea;
+            background: #0b1a33;
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 12px;
+            padding: 14px;
+            border-radius: 18px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             width: 100%;
-            margin-top: 15px;
-            transition: 0.3s;
+            margin-top: 16px;
+            transition: 0.2s;
         }
 
         .modal .close-btn:hover {
-            background: #5a67d8;
-            transform: scale(1.02);
-        }
-
-        .modal .no-answer {
-            color: #e53e3e;
-            font-style: italic;
+            background: #1a2d4a;
         }
 
         @media (max-width: 480px) {
             .container {
                 padding: 20px;
             }
+
             #question {
-                font-size: 16px;
-                padding: 20px 15px;
-                min-height: 80px;
+                font-size: 17px;
+                padding: 24px 16px;
+                min-height: 100px;
             }
+
             .stats {
                 grid-template-columns: repeat(3, 1fr);
-                gap: 6px;
+                gap: 8px;
             }
+
             .stat-item .number {
-                font-size: 20px;
+                font-size: 22px;
             }
-            #historyList li,
-            #failedList li {
-                font-size: 13px;
-                padding: 8px 10px;
-            }
+
             .btn-group button {
                 font-size: 14px;
-                padding: 12px 16px;
-                min-width: 80px;
+                padding: 12px 14px;
             }
-            .history-header {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .history-actions {
-                justify-content: flex-start;
-            }
-            .fail-btn,
-            .answer-btn,
-            .return-btn {
-                font-size: 12px;
-                padding: 4px 10px;
-            }
+
             .modal {
-                padding: 20px;
+                padding: 24px;
             }
-            .modal h2 {
-                font-size: 18px;
+
+            .modal .question-text {
+                font-size: 16px;
             }
-            .tabs .tab-btn {
-                font-size: 13px;
-                padding: 10px 8px;
+
+            .modal .answer-text {
+                font-size: 15px;
             }
         }
     </style>
@@ -606,7 +625,7 @@
                     <div class="label">Всего билетов</div>
                 </div>
                 <div class="stat-item">
-                    <div class="number" id="drawnCount">0</div>
+                    <div class="number done" id="drawnCount">0</div>
                     <div class="label">Выучено</div>
                 </div>
                 <div class="stat-item">
@@ -629,10 +648,9 @@
         </div>
 
         <div class="tab-content" id="tab-failed">
-            <div style="text-align:center; padding: 10px 0; color: #888; font-size:14px;">
+            <div style="text-align:center; padding: 6px 0 14px 0; color: #6b7a8f; font-size:14px;">
                 ❌ Билеты, которые вы отметили как «Не выучил»
             </div>
-
             <div class="history-section" style="border-top: none; padding-top: 0;">
                 <div class="history-header">
                     <h3>📋 Не выученные билеты</h3>
@@ -663,36 +681,113 @@
 
     <script>
         // ============================================
-        // БИЛЕТЫ
+        // БИЛЕТЫ (26 шт.) с ответами
         // ============================================
-        const allTickets = [
-    { id: 1, text: "Понятие и цели: Что такое технология разработки ПО? На чем она базируется и какова ее основная цель?", answer: "Технология разработки ПО — это совокупность методов, инструментов и процессов, используемых для создания программных продуктов. Базируется на инженерии, менеджменте и математике. Основная цель — создание качественного ПО в срок." },
-    { id: 2, text: "Каскадная модель: Опишите каскадную (водопадную) модель. В чем ее достоинства, недостатки и для каких проектов она приемлема?", answer: "Каскадная модель — последовательная разработка, где каждый этап завершается перед началом следующего. Достоинства: простота, четкая структура. Недостатки: сложно вносить изменения, тестирование на поздних этапах. Приемлема для проектов с четкими требованиями." },
-    { id: 3, text: "Эволюционные и итеративные модели: В чем суть эволюционной модели разработки? Опишите спиральную модель и модель с пошаговой разработкой (инкрементная).", answer: "Эволюционная модель — разработка через итерации, каждая версия улучшается. Спиральная модель — циклы: анализ рисков → разработка → планирование → повтор. Инкрементная модель — добавляется функциональность по частям." },
-    { id: 4, text: "Современные методологии: Дайте характеристику методологии RUP (Rational Unified Process). Назовите ее основные фазы и вспомогательные процессы. В чем особенности MSF (Microsoft Solutions Framework)", answer: "RUP — итеративная методология с фазами: начало, детализация, построение, внедрение. Вспомогательные процессы: управление требованиями, моделирование, тестирование. MSF — гибкая методология с акцентом на командную работу." },
-    { id: 5, text: "Жизненный цикл ПО: Перечислите основные этапы жизненного цикла программного обеспечения. Какой этап, согласно статистике, занимает наибольшее время?", answer: "Этапы: Анализ требований → Проектирование → Кодирование → Тестирование → Внедрение → Сопровождение. Наибольшее время занимает этап сопровождения (до 70% всех затрат)." },
-    { id: 6, text: "Анализ требований: В чем заключается этап анализа требований? Что такое функциональные и нефункциональные требования? Приведите примеры.", answer: "Анализ требований — сбор и формализация того, что система должна делать. Функциональные требования: 'пользователь может войти в систему'. Нефункциональные: 'система должна работать без перебоев 99,9% времени'." },
-    { id: 7, text: "Проектирование и кодирование: Опишите этапы проектирования и кодирования. Как связаны между собой процесс объектно-ориентированного анализа и проектирования?", answer: "Проектирование — создание архитектуры системы. Кодирование — написание кода по проекту. Объектно-ориентированный анализ выявляет классы и объекты, проектирование определяет их взаимодействие." },
-    { id: 8, text: "Тестирование и отладка: Дайте определения понятиям «тестирование» и «отладка» ПО. Назовите уровни тестирования. В чем разница между верификацией и валидацией?", answer: "Тестирование — поиск ошибок. Отладка — их исправление. Уровни: модульное, интеграционное, системное, приемочное. Верификация — проверка соответствия спецификациям. Валидация — проверка соответствия ожиданиям пользователя." },
-    { id: 9, text: "Архитектура ПО: Дайте определение архитектуры программного средства. Перечислите основные классы архитектур", answer: "Архитектура — высокоуровневая структура системы, включающая компоненты и их связи. Классы: монолитная, клиент-серверная, микросервисная, слойная, событийно-ориентированная." },
-    { id: 10, text: "Модульность и структура: Что такое программный модуль? Назовите его основные характеристики. Каковы принципы структурного программирования и пошаговой детализации?", answer: "Модуль — логически связанный набор функций и данных. Характеристики: связность (внутренняя) и сцепление (внешнее). Принципы: разделяй и властвуй, пошаговая детализация — разбиение задачи на подзадачи." },
-    { id: 11, text: "Критерии качества: Перечислите основные критерии качества программного обеспечения (надежность, эффективность, сопровождаемость и др.). Почему ПО должно эффективно использовать ресурсы ПК?", answer: "Критерии: надежность, эффективность, сопровождаемость, удобство использования, переносимость, функциональность, безопасность. Эффективное использование ресурсов необходимо для работы на ограниченных мощностях и экономии затрат." },
-    { id: 12, text: "Сопровождение ПО: Что такое сопровождение программного средства? Назовите основные виды сопровождения.", answer: "Сопровождение — поддержка ПО после внедрения. Виды: корректирующее (исправление ошибок), адаптивное (адаптация к новым условиям), совершенствующее (улучшение), предупреждающее (профилактика)." },
-    { id: 13, text: "CASE-средства: Что такое CASE-технологии? Какие задачи они решают и для чего используются в разработке ПО?", answer: "CASE — инструменты автоматизации разработки ПО. Задачи: моделирование, генерация кода, управление требованиями, документирование, тестирование. Используются на всех этапах ЖЦ." },
-    { id: 14, text: "Понятие модели: Дайте определение модели. Какие виды моделей существуют (натурные, информационные, математические, образные)? Приведите примеры.", answer: "Модель — упрощенное представление объекта. Виды: натурные (макет здания), информационные (таблицы), математические (формулы), образные (рисунки, схемы)." },
-    { id: 15, text: "Цели моделирования: С какой целью создаются модели? Что такое существенные признаки объекта и как они влияют на построение модели?", answer: "Цели: понять объект, предсказать поведение, оптимизировать параметры, принять решение. Существенные признаки — ключевые свойства, которые должны быть отражены в модели. Остальное можно опустить." },
-    { id: 16, text: "Этапы моделирования: Опишите последовательность этапов компьютерного моделирования (от постановки задачи до анализа результатов).", answer: "Этапы: Постановка задачи → Формализация → Разработка модели → Проведение экспериментов → Анализ результатов → Корректировка модели." },
-    { id: 17, text: "Классификация моделей: Чем отличаются статические и динамические модели? Что такое модель поведения системы? Приведите примеры.", answer: "Статические — описывают объект в фиксированный момент (схема БД). Динамические — описывают изменение во времени (график процесса). Модель поведения — описывает реакции системы на события (конечный автомат)." },
-    { id: 18, text: "Назначение UML: Для чего используется унифицированный язык моделирования UML? Что такое нотация UML и ее основные строительные блоки (сущности, отношения, диаграммы)?", answer: "UML — язык визуального моделирования для описания, проектирования и документирования систем. Нотация — система условных обозначений. Блоки: сущности (классы, объекты), отношения (наследование, ассоциация), диаграммы." },
-    { id: 19, text: "Типы диаграмм UML: На какие две большие группы делятся диаграммы UML (структурные и поведенческие)? Приведите примеры диаграмм из каждой группы.", answer: "Структурные: диаграмма классов, компонентов, развертывания. Поведенческие: диаграмма прецедентов, последовательности, состояний, деятельности." },
-    { id: 20, text: "Диаграммы прецедентов: Что отображает диаграмма вариантов использования (прецедентов)? Какие элементы входят в ее состав?", answer: "Показывает функциональные требования через взаимодействие акторов с вариантами использования. Элементы: акторы, прецеденты (варианты использования), связи между ними." },
-    { id: 21, text: "Диаграммы взаимодействия: Назовите диаграммы взаимодействия в UML (диаграмма последовательности и диаграмма коммуникации). В чем их сходство и различие?", answer: "Диаграмма последовательности — показывает временной порядок сообщений. Диаграмма коммуникации — акцент на структуре связей между объектами. Сходство: показывают взаимодействие объектов. Различие: во временной и структурной перспективе." },
-    { id: 22, text: "Диаграммы состояний и деятельности: Для чего предназначены диаграммы состояний и диаграммы деятельности? Какие ключевые элементы (состояния, переходы, узлы действия) на них используются?", answer: "Диаграмма состояний — показывает состояния объекта и переходы между ними. Элементы: состояния, начальное/конечное состояние, переходы. Диаграмма деятельности — моделирует рабочие процессы. Элементы: узлы действия, разветвления, слияния." },
-    { id: 23, text: "Структурный подход: В чем суть структурного подхода к моделированию бизнес-процессов? Основные принципы (декомпозиция, иерархия).", answer: "Структурный подход — декомпозиция системы на иерархически связанные функции и данные. Принципы: разделение на модули, иерархическая организация, минимизация связей между модулями." },
-    { id: 24, text: "Объектно-ориентированный подход: Назовите основные принципы объектной модели (абстракция, инкапсуляция, наследование, полиморфизм). Как применяется объектно-ориентированный подход к анализу?", answer: "Принципы: абстракция (выделение существенных свойств), инкапсуляция (скрытие данных), наследование (создание иерархий), полиморфизм (разное поведение). При анализе выделяются классы, их атрибуты, методы и связи." },
-    { id: 25, text: "Методологии анализа бизнеса: Перечислите инструментальные средства для моделирования и анализа бизнес-процессов.", answer: "Инструменты: BPMN (нотация моделирования процессов), IDEF0 (функциональное моделирование), UML (диаграммы деятельности), ARIS (комплексное моделирование), DFD (потоки данных)." },
-    { id: 26, text: "Жизненный цикл и моделирование: Как модели жизненного цикла ПО связаны с этапами создания моделей (анализ, проектирование, реализация)?", answer: "На этапе анализа создаются концептуальные модели (требования). На этапе проектирования — логические и физические модели (архитектура). На этапе реализации — модели кода (диаграммы классов)." }
-	        ];
+        const allTickets = [{
+            id: 1,
+            text: "Понятие и цели: Что такое технология разработки ПО? На чем она базируется и какова ее основная цель?",
+            answer: "Технология разработки ПО — это совокупность методов, инструментов, практик и процессов, используемых для создания программных продуктов.\n\nБазируется на:\n• Инженерии программного обеспечения\n• Управлении проектами\n• Математических основах\n• Опыте предыдущих проектов\n\nОсновная цель — создание качественного программного продукта, который:\n• Соответствует требованиям заказчика\n• Поставляется в установленные сроки\n• Укладывается в бюджет\n• Обладает надежностью, производительностью и сопровождаемостью\n\nТехнология охватывает все этапы: от анализа требований до сопровождения готового продукта."
+        }, {
+            id: 2,
+            text: "Каскадная модель: Опишите каскадную (водопадную) модель. В чем ее достоинства, недостатки и для каких проектов она приемлема?",
+            answer: "Каскадная модель — это последовательная модель разработки, где каждый этап полностью завершается перед началом следующего.\n\nЭтапы:\n1. Анализ требований\n2. Проектирование\n3. Реализация (кодирование)\n4. Тестирование\n5. Внедрение\n6. Сопровождение\n\nДостоинства:\n• Простота и понятность\n• Четкое планирование сроков и бюджета\n• Легкость управления проектом\n• Хорошая документация на каждом этапе\n\nНедостатки:\n• Сложно вносить изменения после завершения этапа\n• Тестирование только в конце\n• Заказчик видит результат только на финальном этапе\n• Ошибки, обнаруженные поздно, дорого исправлять\n\nПриемлема для проектов с четкими и стабильными требованиями, небольших проектов, проектов с жесткими бюджетными ограничениями, государственных заказов с фиксированными требованиями."
+        }, {
+            id: 3,
+            text: "Эволюционные и итеративные модели: В чем суть эволюционной модели разработки? Опишите спиральную модель и модель с пошаговой разработкой (инкрементная).",
+            answer: "Эволюционная модель — разработка через серию итераций, где каждая версия продукта улучшается на основе обратной связи и новых требований.\n\nСпиральная модель (Барри Боэм):\nКаждый цикл состоит из четырех этапов:\n1. Определение целей и альтернатив\n2. Анализ и оценка рисков\n3. Разработка и тестирование\n4. Планирование следующей итерации\n\nАкцент на управление рисками. Каждый виток создает прототип, постепенно превращающийся в готовый продукт.\n\nИнкрементная (пошаговая) модель:\n• Функциональность добавляется частями\n• Первая версия содержит базовые функции\n• Каждая следующая добавляет новые возможности\n• Пользователи получают работающий продукт рано и могут давать обратную связь\n\nПреимущества эволюционных моделей:\n• Быстрая поставка работающего продукта\n• Гибкость при изменении требований\n• Минимизация рисков\n• Постоянная обратная связь от заказчика"
+        }, {
+            id: 4,
+            text: "Современные методологии: Дайте характеристику методологии RUP (Rational Unified Process). Назовите ее основные фазы и вспомогательные процессы. В чем особенности MSF (Microsoft Solutions Framework)",
+            answer: "RUP (Rational Unified Process) — итеративная методология разработки, созданная Rational Software.\n\nОсновные фазы RUP:\n1. Начало — определение целей, оценка стоимости, анализ рисков\n2. Детализация — детальный анализ требований, создание архитектуры\n3. Построение — разработка кода, тестирование, интеграция\n4. Внедрение — релиз, обучение пользователей, развертывание\n\nВспомогательные процессы RUP:\n• Управление требованиями\n• Моделирование\n• Управление конфигурацией\n• Тестирование\n• Управление проектом\n• Управление изменениями\n\nMSF (Microsoft Solutions Framework) — особенности:\n• Акцент на командную работу\n• Принцип «качество через вовлечение пользователей»\n• Итеративная разработка\n• Гибкое управление рисками\n• Децентрализованное принятие решений\n\nГлавное отличие MSF — фокус на бизнес-ценность и эффективную коммуникацию внутри команды."
+        }, {
+            id: 5,
+            text: "Жизненный цикл ПО: Перечислите основные этапы жизненного цикла программного обеспечения. Какой этап, согласно статистике, занимает наибольшее время?",
+            answer: "Жизненный цикл ПО — весь период существования программного продукта от идеи до полного прекращения использования.\n\nОсновные этапы:\n1. Анализ требований — сбор, анализ и документирование требований\n2. Проектирование — создание архитектуры, интерфейсов, структур данных\n3. Реализация (кодирование) — написание программного кода\n4. Тестирование — проверка на соответствие требованиям, поиск ошибок\n5. Внедрение — установка, настройка, запуск в эксплуатацию\n6. Сопровождение — поддержка, исправление ошибок, адаптация, улучшение\n7. Вывод из эксплуатации — завершение работы системы\n\nСогласно статистике, этап сопровождения занимает наибольшее время — до 70% всех затрат на ПО приходится на сопровождение из-за постоянных изменений в законодательстве, бизнес-процессах, технологиях и необходимости исправлять ошибки."
+        }, {
+            id: 6,
+            text: "Анализ требований: В чем заключается этап анализа требований? Что такое функциональные и нефункциональные требования? Приведите примеры.",
+            answer: "Анализ требований — этап сбора, документирования и согласования всех требований к будущей системе. Это фундамент всего проекта, ошибки на этом этапе самые дорогие.\n\nФункциональные требования — описывают, что система должна делать.\nПримеры:\n• «Пользователь может войти в систему по логину и паролю»\n• «Система должна формировать отчет по продажам»\n\nНефункциональные требования — описывают, как система должна это делать: производительность, безопасность, надежность, удобство использования.\nПримеры:\n• «Система должна обрабатывать 1000 запросов в секунду»\n• «Время ответа не более 2 секунд»\n• «Система должна быть доступна 99,9% времени»"
+        }, {
+            id: 7,
+            text: "Проектирование и кодирование: Опишите этапы проектирования и кодирования. Как связаны между собой процесс объектно-ориентированного анализа и проектирования?",
+            answer: "Проектирование — создание архитектуры и детальной структуры системы:\n• Разбиение на модули\n• Определение интерфейсов\n• Выбор технологий\n• Проектирование баз данных\n\nКодирование — написание программного кода на основе проектных решений:\n• Реализация алгоритмов\n• Создание пользовательского интерфейса\n• Написание тестов\n\nСвязь объектно-ориентированного анализа и проектирования:\n• Объектно-ориентированный анализ выявляет классы, объекты, их атрибуты и поведение в предметной области\n• Объектно-ориентированное проектирование определяет, как эти классы и объекты будут взаимодействовать в программной системе\n• Анализ отвечает на вопрос «Что?», проектирование — на вопрос «Как?»"
+        }, {
+            id: 8,
+            text: "Тестирование и отладка: Дайте определения понятиям «тестирование» и «отладка» ПО. Назовите уровни тестирования. В чем разница между верификацией и валидацией?",
+            answer: "Тестирование — процесс выполнения программы с целью обнаружения ошибок. Проверяет, соответствует ли ПО требованиям и работает ли правильно в различных условиях.\n\nОтладка — процесс локализации и исправления найденных ошибок. Включает воспроизведение ошибки, определение её причины и устранение.\n\nУровни тестирования:\n1. Модульное (юнит-тестирование) — проверка отдельных модулей\n2. Интеграционное — проверка взаимодействия между модулями\n3. Системное — проверка всей системы в целом\n4. Приемочное — проверка на соответствие требованиям заказчика\n\nВерификация — проверка того, правильно ли мы строим систему (соответствие спецификациям). Ответ: «Соответствует ли продукт требованиям?»\n\nВалидация — проверка того, ту ли систему мы строим (соответствие ожиданиям пользователя). Ответ: «Правильные ли требования мы реализовали?»"
+        }, {
+            id: 9,
+            text: "Архитектура ПО: Дайте определение архитектуры программного средства. Перечислите основные классы архитектур",
+            answer: "Архитектура ПО — высокоуровневая структура системы, включающая компоненты, их связи, взаимодействия и принципы организации. Это фундаментальное устройство системы, определяющее её ключевые свойства.\n\nОсновные классы архитектур:\n1. Монолитная — все компоненты собраны в одном приложении\n2. Клиент-серверная — разделение на клиентскую и серверную части\n3. Микросервисная — множество независимых сервисов\n4. Слойная (многоуровневая) — разделение на слои (представление, бизнес-логика, данные)\n5. Событийно-ориентированная — взаимодействие через события\n6. Плагинная архитектура — ядро и подключаемые модули"
+        }, {
+            id: 10,
+            text: "Модульность и структура: Что такое программный модуль? Назовите его основные характеристики. Каковы принципы структурного программирования и пошаговой детализации?",
+            answer: "Программный модуль — логически связанный набор функций, классов или процедур, выделенный по функциональному или структурному признаку.\n\nОсновные характеристики модуля:\n• Связность — степень внутренней связанности элементов внутри модуля (чем выше, тем лучше)\n• Сцепление — степень зависимостей между модулями (чем ниже, тем лучше)\n\nПринципы структурного программирования:\n1. Разделяй и властвуй (декомпозиция на подзадачи)\n2. Минимальное количество связей между модулями\n3. Иерархическая организация\n\nПринцип пошаговой детализации — разбиение сложной задачи на более простые подзадачи, которые решаются последовательно, с постепенным уточнением деталей на каждом шаге."
+        }, {
+            id: 11,
+            text: "Критерии качества: Перечислите основные критерии качества программного обеспечения (надежность, эффективность, сопровождаемость и др.). Почему ПО должно эффективно использовать ресурсы ПК?",
+            answer: "Основные критерии качества программного обеспечения:\n1. Надежность — способность функционировать без отказов в заданных условиях\n2. Эффективность — рациональное использование ресурсов (время, память)\n3. Сопровождаемость — легкость внесения изменений и исправлений\n4. Удобство использования — понятность и доступность для пользователя\n5. Переносимость — возможность работы на различных платформах\n6. Функциональность — соответствие заявленным возможностям\n7. Безопасность — защита от несанкционированного доступа\n\nПО должно эффективно использовать ресурсы ПК, потому что это напрямую влияет на:\n• Скорость работы и отзывчивость системы\n• Стоимость оборудования для пользователей\n• Возможность работы на мобильных и устаревших устройствах\n• Энергопотребление (особенно важно для мобильных устройств)\n• Экономию затрат на инфраструктуру в облачных решениях"
+        }, {
+            id: 12,
+            text: "Сопровождение ПО: Что такое сопровождение программного средства? Назовите основные виды сопровождения.",
+            answer: "Сопровождение — процесс поддержки программного обеспечения после его внедрения в эксплуатацию, направленный на сохранение работоспособности и улучшение продукта.\n\nОсновные виды сопровождения:\n1. Корректирующее — исправление обнаруженных ошибок\n2. Адаптивное — адаптация к новым условиям (обновление ОС, изменение законодательства)\n3. Совершенствующее — улучшение функциональности, добавление новых возможностей\n4. Предупреждающее — профилактические меры для предотвращения будущих проблем"
+        }, {
+            id: 13,
+            text: "CASE-средства: Что такое CASE-технологии? Какие задачи они решают и для чего используются в разработке ПО?",
+            answer: "CASE (Computer-Aided Software Engineering) — инструменты автоматизации разработки и поддержки программного обеспечения.\n\nЗадачи CASE-технологий:\n• Автоматизация рутинных операций\n• Повышение качества и производительности\n• Улучшение документирования\n• Поддержка на всех этапах ЖЦ\n\nИспользование в разработке ПО:\n• Моделирование и визуализация\n• Генерация кода\n• Управление требованиями\n• Документирование\n• Тестирование\n• Управление конфигурацией\n• Управление проектами\n\nПримеры: UML-редакторы, среды разработки, системы управления версиями, инструменты тестирования."
+        }, {
+            id: 14,
+            text: "Понятие модели: Дайте определение модели. Какие виды моделей существуют (натурные, информационные, математические, образные)? Приведите примеры.",
+            answer: "Модель — упрощенное представление объекта, процесса или явления, сохраняющее его существенные свойства и используемое для изучения, анализа или прогнозирования.\n\nВиды моделей и примеры:\n• Натурные — физические модели (макет здания, модель самолета)\n• Информационные — описание в виде данных (таблицы, базы данных)\n• Математические — формулы и уравнения (законы физики, формулы расчета)\n• Образные — графические изображения (рисунки, схемы, фотографии)"
+        }, {
+            id: 15,
+            text: "Цели моделирования: С какой целью создаются модели? Что такое существенные признаки объекта и как они влияют на построение модели?",
+            answer: "Цели создания моделей:\n1. Понять объект или процесс (изучение структуры и свойств)\n2. Предсказать поведение (что произойдет при определенных условиях)\n3. Оптимизировать параметры (найти наилучшее решение)\n4. Принять решение (выбрать вариант на основе моделирования)\n5. Обучить персонал (тренировочные модели)\n\nСущественные признаки объекта — ключевые свойства, которые должны быть обязательно отражены в модели. Они определяют, что именно мы моделируем и какую информацию должна давать модель.\n\nВыбор существенных признаков — главный этап построения модели, так как учет несущественных признаков усложняет модель, а игнорирование существенных делает модель бесполезной."
+        }, {
+            id: 16,
+            text: "Этапы моделирования: Опишите последовательность этапов компьютерного моделирования (от постановки задачи до анализа результатов).",
+            answer: "Этапы компьютерного моделирования:\n1. Постановка задачи — определение целей, сбор данных, формулировка проблемы\n2. Формализация — перевод задачи на язык математики или логики\n3. Разработка модели — создание алгоритмов, выбор инструментов\n4. Проведение экспериментов — запуск модели, получение данных\n5. Анализ результатов — интерпретация данных, проверка адекватности модели\n6. Корректировка модели — уточнение параметров, повторный запуск при необходимости"
+        }, {
+            id: 17,
+            text: "Классификация моделей: Чем отличаются статические и динамические модели? Что такое модель поведения системы? Приведите примеры.",
+            answer: "Статические модели описывают объект или систему в фиксированный момент времени, без учета изменений. Они показывают структуру, состав и взаимосвязи элементов.\nПримеры: схема базы данных, организационная структура предприятия, план здания, карта местности.\n\nДинамические модели описывают процессы изменения объекта во времени, показывают последовательность событий и переходов. Они отвечают на вопрос «как меняется система?».\nПримеры: график изменения температуры, модель движения ракеты, прогноз экономических показателей, имитационная модель работы магазина.\n\nМодель поведения системы — это описание реакций системы на различные внешние или внутренние воздействия. Она показывает, как система меняет свои состояния в ответ на события.\nПримеры: конечный автомат для управления дверью (открыта/закрыта/блокировка), алгоритм работы банкомата, модель поведения пользователя на сайте."
+        }, {
+            id: 18,
+            text: "Назначение UML: Для чего используется унифицированный язык моделирования UML? Что такое нотация UML и ее основные строительные блоки (сущности, отношения, диаграммы)?",
+            answer: "UML (Unified Modeling Language) — это унифицированный язык визуального моделирования, используемый для описания, проектирования, документирования и визуализации программных систем и бизнес-процессов.\n\nНотация UML — это система условных обозначений, графических символов и правил их применения для представления элементов модели.\n\nОсновные строительные блоки UML:\n1. Сущности — основные элементы модели (классы, объекты, интерфейсы, компоненты, акторы)\n2. Отношения — показывают связи между сущностями (наследование, ассоциация, агрегация, композиция, зависимость)\n3. Диаграммы — графические представления различных аспектов системы (структура, поведение, взаимодействие, развертывание)"
+        }, {
+            id: 19,
+            text: "Типы диаграмм UML: На какие две большие группы делятся диаграммы UML (структурные и поведенческие)? Приведите примеры диаграмм из каждой группы.",
+            answer: "Диаграммы UML делятся на две большие группы:\n\n1. Структурные диаграммы — показывают статическую структуру системы, отвечают на вопрос 'из чего состоит система?'.\nПримеры:\n• Диаграмма классов\n• Диаграмма компонентов\n• Диаграмма развертывания\n• Диаграмма объектов\n\n2. Поведенческие диаграммы — показывают динамическое поведение системы, отвечают на вопрос 'как работает система?'.\nПримеры:\n• Диаграмма прецедентов\n• Диаграмма последовательности\n• Диаграмма состояний\n• Диаграмма деятельности\n• Диаграмма коммуникации"
+        }, {
+            id: 20,
+            text: "Диаграммы прецедентов: Что отображает диаграмма вариантов использования (прецедентов)? Какие элементы входят в ее состав?",
+            answer: "Диаграмма прецедентов — это графическое представление функциональных требований к системе с точки зрения внешнего наблюдателя.\n\nЧто отображает диаграмма:\n• Границы системы (прямоугольник)\n• Акторы (внешние сущности)\n• Прецеденты (конкретные функции)\n• Отношения (связи между акторами и прецедентами)\n\nЭлементы диаграммы:\n• Актор — изображается человечком, это пользователь или внешняя система\n• Прецедент — изображается эллипсом, это конкретное действие\n• Граница системы — прямоугольник\n• Отношение ассоциации — сплошная линия\n• Отношение включения (include) — пунктирная стрелка\n• Отношение расширения (extend) — пунктирная стрелка\n• Обобщение — стрелка с пустым треугольником\n\nПример: для системы интернет-магазина акторы — «Клиент» и «Администратор». Прецеденты для Клиента: «Зарегистрироваться», «Выбрать товар», «Оформить заказ», «Оплатить заказ»."
+        }, {
+            id: 21,
+            text: "Диаграммы взаимодействия: Назовите диаграммы взаимодействия в UML (диаграмма последовательности и диаграмма коммуникации). В чем их сходство и различие?",
+            answer: "В UML существуют два типа диаграмм взаимодействия:\n\nДиаграмма последовательности — акцент на временной перспективе:\n• Объекты изображаются вертикальными линиями (линиями жизни)\n• Время идет сверху вниз\n• Сообщения показываются в хронологическом порядке\n\nДиаграмма коммуникации — акцент на структурной перспективе:\n• Объекты изображаются как вершины графа\n• Связи показывают взаимодействия\n• Сообщениям присваиваются номера (порядок вызовов)\n\nСходство:\n• Обе показывают взаимодействие объектов в процессе выполнения сценария\n• Используют одни и те же элементы\n• Описывают один и тот же сценарий\n\nРазличие:\n• Диаграмма последовательности фокусируется на времени и порядке сообщений\n• Диаграмма коммуникации фокусируется на структуре связей между объектами"
+        }, {
+            id: 22,
+            text: "Диаграммы состояний и деятельности: Для чего предназначены диаграммы состояний и диаграммы деятельности? Какие ключевые элементы (состояния, переходы, узлы действия) на них используются?",
+            answer: "Диаграмма состояний предназначена для моделирования поведения одного объекта через его состояния и переходы между ними. Показывает жизненный цикл объекта.\n\nКлючевые элементы диаграммы состояний:\n• Начальное состояние (закрашенный кружок)\n• Конечное состояние (закрашенный кружок с ободком)\n• Состояния (прямоугольники с закругленными углами)\n• Переходы (стрелки между состояниями)\n• Действия (что происходит при входе/выходе из состояния)\n\nДиаграмма деятельности предназначена для моделирования бизнес-процессов и алгоритмов. Показывает поток управления от одной деятельности к другой.\n\nКлючевые элементы диаграммы деятельности:\n• Узлы действия (прямоугольники с закругленными углами)\n• Разветвления (ромбы)\n• Слияния\n• Параллельное выполнение\n• Дорожки (Swimlanes) для разделения ответственности"
+        }, {
+            id: 23,
+            text: "Структурный подход: В чем суть структурного подхода к моделированию бизнес-процессов? Основные принципы (декомпозиция, иерархия).",
+            answer: "Структурный подход — это методология анализа и моделирования сложных систем, основанная на их разбиении (декомпозиции) на более простые, иерархически организованные компоненты.\n\nСуть структурного подхода:\n• Сложная система разбивается на более простые части\n• Каждая часть решает свою подзадачу\n• Разбиение продолжается до элементарных действий\n• Позволяет управлять сложностью через разделение проблемы\n\nОсновные принципы:\n1. Декомпозиция — разбиение сложной системы на более простые составные части\n2. Иерархия — построение системы как многоуровневой структуры\n3. Минимизация связей — уменьшение зависимостей между модулями\n4. Функциональная специализация — каждый модуль выполняет одну конкретную функцию\n\nИнструменты: диаграммы потоков данных (DFD), функциональные модели IDEF0, структурные карты.\n\nСтруктурный подход хорошо работает для систем с четко определенными, стабильными бизнес-процессами (государственные проекты, банковская сфера)."
+        }, {
+            id: 24,
+            text: "Объектно-ориентированный подход: Назовите основные принципы объектной модели (абстракция, инкапсуляция, наследование, полиморфизм). Как применяется объектно-ориентированный подход к анализу?",
+            answer: "Объектно-ориентированный подход — методология моделирования, основанная на представлении системы как совокупности взаимодействующих объектов, каждый из которых имеет свои данные и методы.\n\nОсновные принципы:\n1. Абстракция — выделение существенных свойств объекта\n2. Инкапсуляция — скрытие внутренней реализации\n3. Наследование — создание новых классов на основе существующих\n4. Полиморфизм — способность разных объектов реагировать на одни и те же запросы по-разному\n\nПрименение к анализу:\n• Выделяются классы предметной области\n• Определяются их атрибуты и методы\n• Устанавливаются связи между классами (наследование, ассоциация, агрегация, композиция)\n• Результат — модель предметной области в виде диаграммы классов\n\nАнализ отвечает на вопрос 'какие объекты есть в системе?', проектирование — 'как они будут взаимодействовать?'"
+        }, {
+            id: 25,
+            text: "Методологии анализа бизнеса: Перечислите инструментальные средства для моделирования и анализа бизнес-процессов.",
+            answer: "Методологии анализа бизнеса — это совокупность подходов, методов и инструментов для описания, анализа, оптимизации и реинжиниринга бизнес-процессов предприятия.\n\nОсновные инструментальные средства:\n1. BPMN (Business Process Model and Notation) — стандартная нотация для моделирования бизнес-процессов\n2. IDEF0 — методология функционального моделирования\n3. UML — унифицированный язык моделирования\n4. ARIS (Architecture of Integrated Information Systems) — комплексная методология для моделирования всех аспектов предприятия\n5. DFD (Data Flow Diagrams) — диаграммы потоков данных\n6. ER-диаграммы — моделирование данных\n\nВыбор инструмента зависит от целей:\n• Для описания и оптимизации бизнес-процессов — BPMN и IDEF0\n• Для проектирования IT-систем — UML и DFD\n• Для комплексного управления архитектурой предприятия — ARIS\n• Для проектирования баз данных — ER-диаграммы"
+        }, {
+            id: 26,
+            text: "Жизненный цикл и моделирование: Как модели жизненного цикла ПО связаны с этапами создания моделей (анализ, проектирование, реализация)?",
+            answer: "Модели жизненного цикла ПО связаны с этапами создания моделей следующим образом:\n\n1. Этап анализа требований — создаются концептуальные модели предметной области:\n• Модели того, 'что' система должна делать\n• Примеры: диаграммы прецедентов, модели процессов, концептуальные классы\n• Понятны заказчику, помогают согласовать требования\n\n2. Этап проектирования — создаются логические и физические модели:\n• Модели того, 'как' система будет устроена технически\n• Логические модели: диаграммы классов, архитектурные схемы\n• Физические модели: диаграммы компонентов, модели баз данных, диаграммы развертывания\n\n3. Этап реализации (кодирования) — создаются модели кода:\n• Диаграммы классов с методами и атрибутами\n• Диаграммы последовательности для сложных алгоритмов\n• Модели состояний для объектов с изменяемым поведением\n\nМоделирование пронизывает все этапы жизненного цикла — каждому этапу соответствует свой уровень абстракции и тип моделей, обеспечивающий понимание системы на нужном уровне детализации."
+        }];
 
         // ============================================
         // СОСТОЯНИЕ
